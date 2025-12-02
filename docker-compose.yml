@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  soc-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: soc-dashboard
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - soc-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  soc-network:
+    driver: bridge
+
+volumes:
+  soc-data:
+    driver: local
