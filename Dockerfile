@@ -1,5 +1,7 @@
 # Build stage
-FROM node:20-alpine AS builder
+# Use the AWS ECR Public mirror to avoid Docker Hub network/rate limit issues
+ARG NODE_BASE_IMAGE=public.ecr.aws/docker/library/node:20-alpine
+FROM ${NODE_BASE_IMAGE} AS builder
 
 WORKDIR /app
 
@@ -33,7 +35,9 @@ COPY . .
 RUN pnpm run build
 
 # Production stage
-FROM nginx:alpine
+# Use the AWS ECR Public mirror for nginx to improve reliability when pulling
+ARG NGINX_BASE_IMAGE=public.ecr.aws/nginx/nginx:alpine
+FROM ${NGINX_BASE_IMAGE}
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
