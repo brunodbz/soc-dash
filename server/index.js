@@ -6,6 +6,7 @@ import {
   loadDb,
   sanitizeUser,
   saveDb,
+  resetAdminPassword,
   verifyPassword,
   verifyToken,
   hashPassword
@@ -13,6 +14,7 @@ import {
 
 const PORT = process.env.PORT || 4000;
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'];
+const adminResetToken = process.env.ADMIN_RESET_TOKEN || 'admin-reset-123';
 
 ensureDb();
 
@@ -72,6 +74,17 @@ const server = http.createServer(async (req, res) => {
       saveDb(db);
       const token = generateToken({ id: user.id, username: user.username, role: user.role, mustChangePassword: user.mustChangePassword });
       return sendJson(res, 200, { token, user: sanitizeUser(user), mustChangePassword: user.mustChangePassword }, origin);
+    }
+
+    if (pathname === '/api/auth/reset-admin' && req.method === 'POST') {
+      const body = await parseBody(req);
+      if (body.token !== adminResetToken) {
+        return sendJson(res, 401, { message: 'Token inválido para redefinição' }, origin);
+      }
+
+      const user = resetAdminPassword('123456');
+      const token = generateToken({ id: user.id, username: user.username, role: user.role, mustChangePassword: user.mustChangePassword });
+      return sendJson(res, 200, { message: 'Senha do admin redefinida com sucesso', user, token }, origin);
     }
 
     if (pathname === '/api/auth/change-password' && req.method === 'POST') {
