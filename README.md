@@ -55,6 +55,8 @@ The SOC Security Dashboard aggregates data from multiple security platforms incl
 
 ## Quick Start
 
+The repository ships with a `pnpm-lock.yaml`, so the examples below use **pnpm** for deterministic installs. `npm` still works if you prefer it, but using pnpm avoids reinstalling dependencies unnecessarily.
+
 ### Prerequisites
 
 Before you begin, ensure you have one of the following installed on your system:
@@ -62,7 +64,8 @@ Before you begin, ensure you have one of the following installed on your system:
 **Option 1: Node.js (For Local Development)**
 ```bash
 Node.js >= 20
-npm >= 10
+pnpm >= 9 (recommended)
+npm >= 10 (fallback)
 ```
 
 **Option 2: Docker (For Production Deployment)**
@@ -127,7 +130,7 @@ npm --version
 ```bash
 # Clone the repository (if using Git)
 git clone <repository-url>
-cd soc-security-dashboard
+cd soc-dash
 ```
 
 **Option B: Manual Download**
@@ -144,6 +147,9 @@ This step downloads all required packages for the application.
 
 ```bash
 # Install all dependencies (this may take 2-5 minutes)
+pnpm install
+
+# If you prefer npm instead of pnpm
 npm install
 ```
 
@@ -161,6 +167,9 @@ npm install
 
 ```bash
 # Start the application
+pnpm dev
+
+# With npm
 npm run dev
 ```
 
