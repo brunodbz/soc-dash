@@ -191,6 +191,28 @@ function verifyPassword(password, stored) {
   return timingSafeEqual(Buffer.from(key, 'hex'), derived);
 }
 
+function resetAdminPassword(newPassword = '123456') {
+  const db = loadDb();
+  let adminUser = db.users.find(u => u.username === 'admin');
+
+  if (!adminUser) {
+    adminUser = {
+      id: '1',
+      username: 'admin',
+      email: 'admin@soc.example.com',
+      role: 'admin',
+      lastLogin: ''
+    };
+    db.users.push(adminUser);
+  }
+
+  adminUser.password = hashPassword(newPassword);
+  adminUser.mustChangePassword = false;
+  saveDb(db);
+
+  return sanitizeUser(adminUser);
+}
+
 function ensureDb() {
   if (!existsSync(DATA_DIR)) {
     mkdirSync(DATA_DIR, { recursive: true });
@@ -264,6 +286,7 @@ export {
   loadDb,
   sanitizeUser,
   saveDb,
+  resetAdminPassword,
   verifyPassword,
   verifyToken
 };
