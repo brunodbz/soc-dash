@@ -224,7 +224,10 @@ export const securityService = {
     if (!integration) {
       throw new Error('Integration not found');
     }
-    return { ...integration, ...updates };
+
+    Object.assign(integration, updates);
+
+    return { ...integration };
   },
 
   getDashboardStats: async (): Promise<DashboardStats> => {
@@ -250,6 +253,17 @@ export const securityService = {
   getUsers: async (): Promise<User[]> => {
     await new Promise(resolve => setTimeout(resolve, 300));
     return mockUsers;
+  },
+
+  updateUser: async (id: string, updates: Partial<User>): Promise<User> => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    const user = mockUsers.find(u => u.id === id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    Object.assign(user, updates);
+    return { ...user };
   },
 
   updateEventStatus: async (id: string, status: SecurityEvent['status']): Promise<SecurityEvent> => {
