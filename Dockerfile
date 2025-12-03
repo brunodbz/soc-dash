@@ -9,6 +9,10 @@ COPY package.json pnpm-lock.yaml ./
 # Install pnpm
 RUN npm install -g pnpm
 
+# Improve resilience against registry timeouts
+RUN pnpm config set fetch-timeout 600000 \
+  && pnpm config set fetch-retries 5
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
