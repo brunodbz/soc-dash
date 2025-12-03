@@ -220,14 +220,13 @@ export const securityService = {
 
   updateIntegration: async (id: string, updates: Partial<IntegrationConfig>): Promise<IntegrationConfig> => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    const integration = mockIntegrations.find(i => i.id === id);
-    if (!integration) {
+    const index = mockIntegrations.findIndex(i => i.id === id);
+    if (index === -1) {
       throw new Error('Integration not found');
     }
-
-    Object.assign(integration, updates);
-
-    return { ...integration };
+    // Update the integration in the array
+    mockIntegrations[index] = { ...mockIntegrations[index], ...updates };
+    return mockIntegrations[index];
   },
 
   getDashboardStats: async (): Promise<DashboardStats> => {
@@ -257,13 +256,13 @@ export const securityService = {
 
   updateUser: async (id: string, updates: Partial<User>): Promise<User> => {
     await new Promise(resolve => setTimeout(resolve, 400));
-    const user = mockUsers.find(u => u.id === id);
-    if (!user) {
+    const index = mockUsers.findIndex(u => u.id === id);
+    if (index === -1) {
       throw new Error('User not found');
     }
-
-    Object.assign(user, updates);
-    return { ...user };
+    // Update the user in the array
+    mockUsers[index] = { ...mockUsers[index], ...updates };
+    return mockUsers[index];
   },
 
   updateEventStatus: async (id: string, status: SecurityEvent['status']): Promise<SecurityEvent> => {

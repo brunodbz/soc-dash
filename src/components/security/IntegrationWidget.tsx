@@ -30,12 +30,20 @@ const statusConfig = {
     icon: AlertCircle,
     className: 'text-destructive',
     label: 'Error'
+  },
+  disabled: {
+    icon: XCircle,
+    className: 'text-muted-foreground',
+    label: 'Disabled'
   }
 };
 
 export function IntegrationWidget({ integration }: IntegrationWidgetProps) {
   const SourceIcon = sourceIcons[integration.source];
-  const statusInfo = statusConfig[integration.status];
+  
+  // If integration is disabled, show disabled status regardless of connection status
+  const effectiveStatus = !integration.enabled ? 'disabled' : integration.status;
+  const statusInfo = statusConfig[effectiveStatus as keyof typeof statusConfig];
   const StatusIcon = statusInfo.icon;
 
   const timeAgo = (timestamp: string) => {
@@ -69,7 +77,7 @@ export function IntegrationWidget({ integration }: IntegrationWidgetProps) {
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">Status:</span>
           <Badge 
-            variant={integration.status === 'connected' ? 'default' : 'secondary'}
+            variant={effectiveStatus === 'connected' ? 'default' : 'secondary'}
             className="text-xs"
           >
             {statusInfo.label}
