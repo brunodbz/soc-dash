@@ -10,8 +10,18 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
 
 # Improve resilience against registry timeouts
-RUN pnpm config set fetch-timeout 600000 \
-  && pnpm config set fetch-retries 5
+ENV PNPM_REGISTRY=https://registry.npmjs.org/ \
+  PNPM_FETCH_TIMEOUT=600000 \
+  PNPM_FETCH_RETRIES=10 \
+  PNPM_FETCH_RETRY_MINTIMEOUT=20000 \
+  PNPM_FETCH_RETRY_MAXTIMEOUT=120000
+
+# Mirror the environment configuration within pnpm itself
+RUN pnpm config set registry ${PNPM_REGISTRY} \
+  && pnpm config set fetch-timeout ${PNPM_FETCH_TIMEOUT} \
+  && pnpm config set fetch-retries ${PNPM_FETCH_RETRIES} \
+  && pnpm config set fetch-retry-mintimeout ${PNPM_FETCH_RETRY_MINTIMEOUT} \
+  && pnpm config set fetch-retry-maxtimeout ${PNPM_FETCH_RETRY_MAXTIMEOUT}
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
