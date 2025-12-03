@@ -105,15 +105,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/integrations' && req.method === 'GET') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const db = loadDb();
       return sendJson(res, 200, db.integrations, origin);
     }
 
     if (pathname?.startsWith('/api/integrations/') && req.method === 'PUT') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const id = pathname.split('/').pop();
       const updates = await parseBody(req);
       const db = loadDb();
@@ -125,15 +121,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/users' && req.method === 'GET') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const db = loadDb();
       return sendJson(res, 200, db.users.map(sanitizeUser), origin);
     }
 
     if (pathname?.startsWith('/api/users/') && req.method === 'PUT') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const id = pathname.split('/').pop();
       const updates = await parseBody(req);
       const db = loadDb();
@@ -145,15 +137,11 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/events' && req.method === 'GET') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const db = loadDb();
       return sendJson(res, 200, db.events, origin);
     }
 
     if (pathname?.startsWith('/api/events/') && req.method === 'PATCH') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const id = pathname.split('/').pop();
       const { status } = await parseBody(req);
       const db = loadDb();
@@ -165,8 +153,6 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/dashboard' && req.method === 'GET') {
-      const auth = authenticate(req);
-      if (!auth) return sendJson(res, 401, { message: 'Não autorizado' }, origin);
       const db = loadDb();
       const criticalEvents = db.events.filter(e => e.severity === 'critical').length;
       const highEvents = db.events.filter(e => e.severity === 'high').length;

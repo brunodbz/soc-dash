@@ -1,18 +1,29 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { authService } from '@/services/authService';
 import type { AuthResponse, User } from '@/types/security';
 
 interface AuthContextValue {
   user: User | null;
   token: string | null;
   mustChangePassword: boolean;
-  login: (username: string, password: string) => Promise<AuthResponse>;
+  login: (username?: string, password?: string) => Promise<AuthResponse>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   logout: () => void;
   setAuth: (payload: AuthResponse) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+const defaultAuth: AuthResponse = {
+  token: 'public-access-token',
+  user: {
+    id: 'public-user',
+    username: 'Acesso livre',
+    email: 'public@socdash.local',
+    role: 'admin',
+    lastLogin: new Date().toISOString()
+  },
+  mustChangePassword: false
+};
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -27,7 +38,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
       setMustChangePassword(storedMustChange === 'true');
+      return;
     }
+
+    persistAuth(defaultAuth);
   }, []);
 
   const persistAuth = (payload: AuthResponse) => {
@@ -39,24 +53,17 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('socdash_must_change', String(payload.mustChangePassword));
   };
 
-  const login = async (username: string, password: string) => {
-    const data = await authService.login(username, password);
-    persistAuth(data);
-    return data;
+  const login = async () => {
+    persistAuth(defaultAuth);
+    return defaultAuth;
   };
 
   const changePassword = async (currentPassword: string, newPassword: string) => {
-    const data = await authService.changePassword(currentPassword, newPassword);
-    persistAuth(data);
+    console.info('Change password called, but authentication is disabled', { currentPassword, newPassword });
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    setMustChangePassword(false);
-    localStorage.removeItem('socdash_token');
-    localStorage.removeItem('socdash_user');
-    localStorage.removeItem('socdash_must_change');
+    persistAuth(defaultAuth);
   };
 
   const setAuth = (payload: AuthResponse) => persistAuth(payload);
