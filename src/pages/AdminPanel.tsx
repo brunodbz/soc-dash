@@ -7,27 +7,46 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { securityService } from '@/services/securityService';
-import { 
-  ElasticsearchForm, 
-  TenableForm, 
-  DefenderForm, 
-  OpenCTIForm 
+import {
+  ElasticsearchForm,
+  TenableForm,
+  DefenderForm,
+  OpenCTIForm
 } from '@/components/security/IntegrationConfigForms';
-import type { 
-  IntegrationConfig, 
-  User, 
-  ElasticsearchConfig, 
-  TenableConfig, 
-  DefenderConfig, 
-  OpenCTIConfig 
+import type {
+  IntegrationConfig,
+  User,
+  ElasticsearchConfig,
+  TenableConfig,
+  DefenderConfig,
+  OpenCTIConfig
 } from '@/types/security';
 import { Settings, Users, Database, Shield, Activity, Brain, Save, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 export default function AdminPanel() {
   const [integrations, setIntegrations] = useState<IntegrationConfig[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userForm, setUserForm] = useState<User | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -57,8 +76,8 @@ export default function AdminPanel() {
 
   const handleToggleIntegration = async (id: string, enabled: boolean) => {
     try {
-      await securityService.updateIntegration(id, { enabled });
-      setIntegrations(prev => prev.map(i => i.id === id ? { ...i, enabled } : i));
+      const updated = await securityService.updateIntegration(id, { enabled });
+      setIntegrations(prev => prev.map(i => i.id === id ? updated : i));
       toast({
         title: 'Success',
         description: `Integration ${enabled ? 'enabled' : 'disabled'} successfully`
@@ -74,7 +93,8 @@ export default function AdminPanel() {
 
   const handleSaveIntegration = async (integration: IntegrationConfig) => {
     try {
-      await securityService.updateIntegration(integration.id, integration);
+      const updated = await securityService.updateIntegration(integration.id, integration);
+      setIntegrations(prev => prev.map(i => i.id === integration.id ? updated : i));
       toast({
         title: 'Success',
         description: 'Integration settings saved successfully'
@@ -93,6 +113,37 @@ export default function AdminPanel() {
     tenable: Shield,
     defender: Activity,
     opencti: Brain
+  };
+
+  const handleUserEdit = (user: User) => {
+    setEditingUser(user);
+    setUserForm(user);
+  };
+
+  const handleSaveUser = async () => {
+    if (!editingUser || !userForm) return;
+
+    try {
+      const updatedUser = await securityService.updateUser(editingUser.id, {
+        username: userForm.username,
+        email: userForm.email,
+        role: userForm.role
+      });
+
+      setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+      toast({
+        title: 'Success',
+        description: 'User updated successfully'
+      });
+      setEditingUser(null);
+      setUserForm(null);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update user',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
@@ -263,7 +314,7 @@ export default function AdminPanel() {
                         </p>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleUserEdit(user)}>
                           Edit
                         </Button>
                       </div>
@@ -272,6 +323,72 @@ export default function AdminPanel() {
                 </div>
               </CardContent>
             </Card>
+
+            <Dialog open={!!editingUser} onOpenChange={(open) => {
+              if (!open) {
+                setEditingUser(null);
+                setUserForm(null);
+              }
+            }}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit User</DialogTitle>
+                  <DialogDescription>
+                    Update user account details and role assignments.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="user-username">Username</Label>
+                    <Input
+                      id="user-username"
+                      value={userForm?.username ?? ''}
+                      onChange={(e) => setUserForm(prev => prev ? { ...prev, username: e.target.value } : prev)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="user-email">Email</Label>
+                    <Input
+                      id="user-email"
+                      type="email"
+                      value={userForm?.email ?? ''}
+                      onChange={(e) => setUserForm(prev => prev ? { ...prev, email: e.target.value } : prev)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Role</Label>
+                    <Select
+                      value={userForm?.role}
+                      onValueChange={(role: User['role']) => setUserForm(prev => prev ? { ...prev, role } : prev)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="analyst">Analyst</SelectItem>
+                        <SelectItem value="manager">Manager</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => {
+                    setEditingUser(null);
+                    setUserForm(null);
+                  }}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveUser} disabled={!userForm?.username || !userForm?.email}>
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
             <Card>
               <CardHeader>
