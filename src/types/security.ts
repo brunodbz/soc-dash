@@ -79,6 +79,7 @@ export interface User {
   email: string;
   role: 'admin' | 'analyst' | 'manager';
   lastLogin: string;
+  mustChangePassword?: boolean;
 }
 
 export interface ExportOptions {
@@ -89,4 +90,10 @@ export interface ExportOptions {
   };
   severityFilter: SeverityLevel[];
   sourceFilter: SecuritySource[];
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+  mustChangePassword: boolean;
 }

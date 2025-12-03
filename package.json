@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "lint": "tsgo -p tsconfig.check.json && npx biome lint && npm run build -- --outDir /tmp/build-check"
+    "lint": "tsgo -p tsconfig.check.json && npx biome lint && npm run build -- --outDir /tmp/build-check",
+    "server": "node server/index.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

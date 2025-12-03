@@ -4,10 +4,12 @@ import { Shield, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import routes from '@/routes';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, logout } = useAuth();
   const navigation = routes.filter((route) => route.visible !== false);
 
   return (
@@ -37,6 +39,17 @@ export default function Header() {
                 </Button>
               </Link>
             ))}
+            {user && (
+              <div className="flex items-center gap-2 pl-4 border-l">
+                <div className="text-sm text-muted-foreground">
+                  <div className="font-semibold text-foreground">{user.username}</div>
+                  <div className="text-xs">{user.role}</div>
+                </div>
+                <Button variant="outline" onClick={logout}>
+                  Sair
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">
@@ -66,6 +79,17 @@ export default function Header() {
                 </Button>
               </Link>
             ))}
+            {user && (
+              <div className="flex items-center justify-between pt-2">
+                <div className="text-sm">
+                  <div className="font-semibold">{user.username}</div>
+                  <div className="text-muted-foreground text-xs">{user.role}</div>
+                </div>
+                <Button variant="outline" size="sm" onClick={logout}>
+                  Sair
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </nav>
