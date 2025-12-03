@@ -2,6 +2,46 @@
 
 All notable changes to the SOC Security Dashboard project.
 
+## [1.2.1] - 2025-12-01
+
+### Added - Comprehensive Installation Documentation
+
+#### New Documentation
+- **Enhanced README.md**: Added detailed step-by-step installation guide
+  - Complete Node.js installation instructions for Windows, macOS, and Linux
+  - Comprehensive Docker installation guide for all platforms
+  - Step-by-step configuration guide for all integrations
+  - Detailed troubleshooting section with common issues and solutions
+  - Usage guide for all dashboard features
+  - Tips for beginners section
+  - Next steps and best practices
+
+- **QUICK_START_GUIDE.md**: New quick reference guide
+  - 5-minute quick start for experienced users
+  - Condensed installation steps
+  - Quick configuration reference
+  - Common commands cheat sheet
+  - Quick troubleshooting tips
+  - Setup checklist
+
+#### Documentation Improvements
+- **Beginner-Friendly**: Written for users with no prior experience
+- **Platform-Specific**: Separate instructions for Windows, macOS, and Linux
+- **Visual Clarity**: Uses emojis and formatting for easy scanning
+- **Comprehensive**: Covers installation, configuration, usage, and troubleshooting
+- **Practical Examples**: Real-world examples and expected outputs
+
+#### Content Highlights
+- Installation prerequisites with verification steps
+- Expected output examples for each command
+- "What's happening?" explanations for complex steps
+- Detailed credential acquisition guides for each integration
+- Browser console debugging instructions
+- Docker log viewing and management
+- File structure explanation for beginners
+
+---
+
 ## [1.2.0] - 2025-12-01
 
 ### Added - Affected Hosts and IPs Display

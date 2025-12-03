@@ -57,68 +57,496 @@ The SOC Security Dashboard aggregates data from multiple security platforms incl
 
 ### Prerequisites
 
+Before you begin, ensure you have one of the following installed on your system:
+
+**Option 1: Node.js (For Local Development)**
 ```bash
 Node.js >= 20
 npm >= 10
-# Or
+```
+
+**Option 2: Docker (For Production Deployment)**
+```bash
 Docker >= 20.10
 Docker Compose >= 2.0
 ```
 
-### Local Development
+---
 
-1. **Install dependencies**
+## 📋 Step-by-Step Installation Guide
+
+This guide will walk you through the complete installation process, from downloading the code to accessing the dashboard.
+
+### Method 1: Local Development Setup (Recommended for Testing)
+
+This method is perfect for testing, development, or if you don't have Docker installed.
+
+#### Step 1: Install Node.js
+
+If you don't have Node.js installed:
+
+**Windows:**
+1. Visit https://nodejs.org/
+2. Download the LTS version (20.x or higher)
+3. Run the installer and follow the prompts
+4. Verify installation by opening Command Prompt and typing:
    ```bash
-   npm install
+   node --version
+   npm --version
    ```
 
-2. **Start development server**
+**macOS:**
+1. Install Homebrew (if not installed): https://brew.sh/
+2. Open Terminal and run:
    ```bash
-   npm run dev
+   brew install node@20
    ```
-
-3. **Access the application**
-   ```
-   http://localhost:5173
-   ```
-
-### Docker Deployment
-
-1. **Build and start with Docker Compose**
+3. Verify installation:
    ```bash
-   docker-compose up -d
+   node --version
+   npm --version
    ```
 
-2. **Access the application**
-   ```
-   http://localhost
-   ```
+**Linux (Ubuntu/Debian):**
+```bash
+# Update package list
+sudo apt update
 
-For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+# Install Node.js 20.x
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
-## Configuration
+# Verify installation
+node --version
+npm --version
+```
 
-### Integration Setup
+#### Step 2: Download the Project
 
-The dashboard supports four security tool integrations, each with specific credential requirements:
+**Option A: Using Git**
+```bash
+# Clone the repository (if using Git)
+git clone <repository-url>
+cd soc-security-dashboard
+```
 
-1. **Elasticsearch SIEM** - URL, Username, Password
-2. **Tenable** - URL, Access Key, Secret Key  
-3. **Microsoft Defender** - Tenant ID, Client ID, Client Secret
-4. **OpenCTI** - URL, API Token
-
-For detailed configuration instructions, see [CONFIGURATION.md](./CONFIGURATION.md)
-
-### Quick Configuration
-
-1. Copy the environment template:
+**Option B: Manual Download**
+1. Download the project ZIP file
+2. Extract it to a folder (e.g., `C:\soc-dashboard` or `~/soc-dashboard`)
+3. Open Terminal/Command Prompt and navigate to the folder:
    ```bash
-   cp .env.example .env
+   cd path/to/soc-dashboard
    ```
 
-2. Edit `.env` and fill in your credentials
+#### Step 3: Install Dependencies
 
-3. Configure integrations via the Admin Panel UI
+This step downloads all required packages for the application.
+
+```bash
+# Install all dependencies (this may take 2-5 minutes)
+npm install
+```
+
+**What's happening?**
+- npm reads the `package.json` file
+- Downloads all required libraries
+- Creates a `node_modules` folder with all dependencies
+
+**Troubleshooting:**
+- If you see permission errors on Linux/Mac, try: `sudo npm install`
+- If installation fails, delete `node_modules` folder and try again
+- Ensure you have a stable internet connection
+
+#### Step 4: Start the Development Server
+
+```bash
+# Start the application
+npm run dev
+```
+
+**Expected Output:**
+```
+  VITE v5.x.x  ready in xxx ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+#### Step 5: Access the Dashboard
+
+1. Open your web browser (Chrome, Firefox, Safari, or Edge)
+2. Navigate to: **http://localhost:5173**
+3. You should see the SOC Security Dashboard homepage
+
+**First Time Access:**
+- The dashboard will display with mock/demo data
+- You can explore all features without configuring integrations
+- To configure real integrations, proceed to the Configuration section below
+
+#### Step 6: Stop the Server
+
+When you're done:
+- Press `Ctrl + C` in the terminal to stop the server
+- Or simply close the terminal window
+
+---
+
+### Method 2: Docker Deployment (Recommended for Production)
+
+This method is ideal for production environments or if you want a containerized deployment.
+
+#### Step 1: Install Docker
+
+**Windows:**
+1. Download Docker Desktop from: https://www.docker.com/products/docker-desktop
+2. Run the installer
+3. Restart your computer if prompted
+4. Open Docker Desktop and wait for it to start
+5. Verify installation in Command Prompt:
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+**macOS:**
+1. Download Docker Desktop from: https://www.docker.com/products/docker-desktop
+2. Drag Docker to Applications folder
+3. Open Docker from Applications
+4. Wait for Docker to start (whale icon in menu bar)
+5. Verify installation in Terminal:
+   ```bash
+   docker --version
+   docker-compose --version
+   ```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Update package list
+sudo apt update
+
+# Install prerequisites
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Add Docker's official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Add Docker repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# Add your user to docker group (to run without sudo)
+sudo usermod -aG docker $USER
+
+# Log out and log back in, then verify
+docker --version
+docker compose version
+```
+
+#### Step 2: Download the Project
+
+Same as Method 1, Step 2 (using Git or manual download)
+
+#### Step 3: Navigate to Project Directory
+
+```bash
+cd path/to/soc-dashboard
+```
+
+#### Step 4: Build and Start with Docker Compose
+
+```bash
+# Build and start the containers (first time may take 5-10 minutes)
+docker-compose up -d
+```
+
+**What's happening?**
+- `-d` flag runs containers in the background (detached mode)
+- Docker builds the application image
+- Creates and starts the container
+- Sets up networking and volumes
+
+**Expected Output:**
+```
+[+] Building 120.5s (15/15) FINISHED
+[+] Running 2/2
+ ✔ Network soc-network    Created
+ ✔ Container soc-dashboard Started
+```
+
+#### Step 5: Verify Container is Running
+
+```bash
+# Check container status
+docker-compose ps
+```
+
+**Expected Output:**
+```
+NAME            IMAGE           STATUS          PORTS
+soc-dashboard   soc-dashboard   Up 2 minutes    0.0.0.0:80->80/tcp
+```
+
+#### Step 6: Access the Dashboard
+
+1. Open your web browser
+2. Navigate to: **http://localhost**
+3. The SOC Security Dashboard should load
+
+**Note:** No port number needed (uses default HTTP port 80)
+
+#### Step 7: View Logs (Optional)
+
+To see application logs:
+```bash
+# View logs
+docker-compose logs -f
+
+# Press Ctrl+C to stop viewing logs (container keeps running)
+```
+
+#### Step 8: Stop the Application
+
+When you need to stop the dashboard:
+```bash
+# Stop containers
+docker-compose down
+```
+
+To stop and remove all data:
+```bash
+# Stop and remove volumes
+docker-compose down -v
+```
+
+---
+
+## 🔧 Configuration Guide
+
+After installation, configure the security integrations to connect to your actual security tools.
+
+### Step 1: Access Admin Panel
+
+1. Open the dashboard in your browser
+2. Click **"Admin"** in the top navigation menu
+3. Click on the **"Integrations"** tab
+
+### Step 2: Configure Elasticsearch SIEM
+
+1. Locate the **"Elastic Search SIEM"** card
+2. Toggle the switch to **ON** (if not already enabled)
+3. Fill in the credentials:
+   - **URL**: Your Elasticsearch endpoint (e.g., `https://elastic.example.com:9200`)
+   - **Username**: Your Elasticsearch username (typically `elastic`)
+   - **Password**: Your Elasticsearch password
+4. Click **"Save Configuration"**
+5. Verify the status shows **"Connected"** with a green badge
+
+**Where to find credentials:**
+- URL: From your Elasticsearch deployment/administrator
+- Username/Password: From your Elasticsearch administrator or setup documentation
+
+### Step 3: Configure Tenable
+
+1. Locate the **"Tenable Vulnerability Scanner"** card
+2. Toggle the switch to **ON**
+3. Fill in the credentials:
+   - **URL**: Usually `https://cloud.tenable.com`
+   - **Access Key**: Your Tenable API access key
+   - **Secret Key**: Your Tenable API secret key
+4. Click **"Save Configuration"**
+
+**How to get Tenable API keys:**
+1. Log in to Tenable.io
+2. Go to **Settings** → **My Account** → **API Keys**
+3. Click **"Generate"** to create new keys
+4. Copy both keys immediately (secret key shown only once)
+
+### Step 4: Configure Microsoft Defender
+
+1. Locate the **"Microsoft Defender"** card
+2. Toggle the switch to **ON**
+3. Fill in the credentials:
+   - **Tenant ID**: Your Azure AD tenant ID
+   - **Client ID**: Application client ID
+   - **Client Secret**: Application secret value
+4. Click **"Save Configuration"**
+
+**How to get Microsoft Defender credentials:**
+1. Go to **Azure Portal** → **Azure Active Directory**
+2. Navigate to **App registrations**
+3. Create or select your application
+4. Copy **Directory (tenant) ID** and **Application (client) ID**
+5. Go to **Certificates & secrets** → Create new client secret
+6. Copy the secret value immediately
+
+### Step 5: Configure OpenCTI
+
+1. Locate the **"OpenCTI Threat Intelligence"** card
+2. Toggle the switch to **ON**
+3. Fill in the credentials:
+   - **URL**: Your OpenCTI instance URL (e.g., `https://opencti.example.com`)
+   - **API Token**: Your OpenCTI API token
+4. Click **"Save Configuration"**
+
+**How to get OpenCTI API token:**
+1. Log in to your OpenCTI instance
+2. Click your **profile icon** (top right)
+3. Go to **Profile** → **API Access**
+4. Click **"Create Token"**
+5. Set name and permissions
+6. Copy the generated token
+
+### Step 6: Verify All Integrations
+
+After configuring all integrations:
+
+1. Check that all integration cards show **"Connected"** status
+2. Verify event counts are greater than 0
+3. Check that "Last Sync" timestamps are recent
+4. Return to the main dashboard
+5. Confirm events from all sources are displayed
+
+---
+
+## 🎯 Using the Dashboard
+
+### Viewing Security Events
+
+1. **Main Dashboard**: Shows all security events from all sources
+2. **Filter by Severity**: Click buttons at the top (All, Critical, High, Medium)
+3. **View Details**: Click **"View Details"** button on any event card
+4. **Update Status**: In the details dialog, click status buttons (Open, Investigating, Resolved, Closed)
+
+### Viewing Affected Hosts and IPs
+
+Each event card displays affected systems:
+
+- **Single Host/IP**: Shown directly on the card
+- **Multiple Hosts/IPs**: Shown as clickable count (e.g., "3 hosts")
+- **Click the count**: Opens a popup with complete list of all affected systems
+
+### Exporting Reports
+
+1. **Filter events** (optional): Select severity filter
+2. **Click Export Button**:
+   - **"Export to Excel"**: Downloads .xlsx file with all event details
+   - **"Export to PDF"**: Downloads .pdf report with formatted data
+3. **Open the file**: Find in your Downloads folder
+
+---
+
+## 🔍 Troubleshooting
+
+### Common Issues and Solutions
+
+#### Issue: "Cannot access http://localhost:5173"
+
+**Solution:**
+1. Check if the development server is running (look for the terminal with the running process)
+2. Ensure no other application is using port 5173
+3. Try restarting the server: Press `Ctrl+C`, then run `npm run dev` again
+4. Try a different port: `npm run dev -- --port 3000`
+
+#### Issue: "npm: command not found"
+
+**Solution:**
+- Node.js is not installed or not in PATH
+- Reinstall Node.js following Step 1 of Method 1
+- Restart your terminal/command prompt after installation
+
+#### Issue: "Docker daemon is not running"
+
+**Solution:**
+1. **Windows/Mac**: Open Docker Desktop application
+2. **Linux**: Start Docker service:
+   ```bash
+   sudo systemctl start docker
+   sudo systemctl enable docker
+   ```
+
+#### Issue: "Port 80 is already in use"
+
+**Solution:**
+1. Stop the application using port 80 (often Skype, IIS, or Apache)
+2. Or modify `docker-compose.yml` to use a different port:
+   ```yaml
+   ports:
+     - "8080:80"  # Change 80 to 8080
+   ```
+3. Access dashboard at: http://localhost:8080
+
+#### Issue: "Integration shows 'Disconnected'"
+
+**Solution:**
+1. Verify credentials are correct
+2. Check network connectivity to the security tool
+3. Ensure firewall allows outbound connections
+4. Verify the security tool's API is accessible
+5. Check API key permissions in the security tool
+
+#### Issue: "No events displayed"
+
+**Solution:**
+1. Check integration status (should be "Connected")
+2. Verify the security tool has events/data
+3. Check "Last Sync" timestamp
+4. Try disabling and re-enabling the integration
+5. Check browser console for errors (F12 → Console tab)
+
+---
+
+## 📚 Additional Resources
+
+- **Detailed Configuration**: See [CONFIGURATION.md](./CONFIGURATION.md)
+- **Docker Deployment**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **Integration Testing**: See [INTEGRATION_TESTING.md](./INTEGRATION_TESTING.md)
+- **Feature Documentation**: See [HOSTS_IPS_FEATURE.md](./HOSTS_IPS_FEATURE.md)
+- **Visual Guide**: See [VISUAL_GUIDE.md](./VISUAL_GUIDE.md)
+
+---
+
+## 💡 Tips for Beginners
+
+### Understanding the File Structure
+
+- **`src/`**: Contains all application source code
+- **`node_modules/`**: Contains downloaded dependencies (don't modify)
+- **`package.json`**: Lists all dependencies and scripts
+- **`.env`**: Contains environment variables (create from `.env.example`)
+- **`docker-compose.yml`**: Docker configuration file
+
+### Making Changes
+
+1. **Never edit files in `node_modules/`**
+2. **Always stop the server before pulling updates**
+3. **Run `npm install` after pulling updates**
+4. **Clear browser cache if changes don't appear** (Ctrl+Shift+R or Cmd+Shift+R)
+
+### Getting Help
+
+1. Check the troubleshooting section above
+2. Review the documentation files in the project
+3. Check browser console for errors (F12 → Console)
+4. Check terminal/command prompt for error messages
+5. Contact your system administrator
+
+---
+
+## 🚀 Next Steps
+
+After successful installation:
+
+1. ✅ **Explore the Dashboard**: Familiarize yourself with the interface
+2. ✅ **Configure Integrations**: Connect to your security tools
+3. ✅ **Test Filtering**: Try different severity filters
+4. ✅ **Test Exports**: Generate Excel and PDF reports
+5. ✅ **Review Documentation**: Read additional guides for advanced features
+
+---
 
 ## Project Structure
 
