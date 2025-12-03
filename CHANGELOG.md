@@ -2,6 +2,106 @@
 
 All notable changes to the SOC Security Dashboard project.
 
+## [1.2.4] - 2025-12-01
+
+### Fixed - Integration Status Display
+
+#### Dashboard Integration Status
+- **Fixed**: Disabled integrations now show correct status on Dashboard
+  - Added "Disabled" status type to IntegrationWidget
+  - Implemented effective status logic (enabled field takes priority over status field)
+  - Dashboard now shows "Disabled" badge when integration is toggled off
+  - Gray X icon displayed for disabled integrations
+  - Status badge correctly reflects integration state
+
+#### Status Priority Logic
+- Disabled state (enabled=false) takes priority over connection status
+- When enabled=true, shows actual connection status (connected/disconnected/error)
+- Clear visual distinction between disabled and disconnected states
+
+#### Admin Panel Improvements
+- Updated toggle handler to reload integration data after changes
+- Ensures UI stays synchronized with backend state
+- Better data consistency across Dashboard and Admin Panel
+
+#### User Experience
+- **Before**: Disabled integrations still showed "Connected"
+- **After**: Disabled integrations show "Disabled" with gray badge
+- Clear visual feedback for integration state changes
+- Consistent status display across all pages
+
+#### Files Modified
+- `src/components/security/IntegrationWidget.tsx` - Added disabled status and effective status logic
+- `src/pages/AdminPanel.tsx` - Improved data refresh after toggle
+
+---
+
+## [1.2.3] - 2025-12-01
+
+### Fixed - React Runtime Error
+
+#### Critical Bug Fix
+- **Fixed**: "Cannot read properties of null (reading 'useState')" error
+  - Root cause: React types version mismatch (v19 types with v18 runtime)
+  - Downgraded @types/react from ^19.2.2 to ^18.3.12
+  - Downgraded @types/react-dom from ^19.2.2 to ^18.3.5
+  - Cleared Vite dependency cache
+  - Application now loads correctly
+
+#### Impact
+- **Before**: Application failed to load with critical runtime error
+- **After**: All React hooks work correctly, application fully functional
+
+#### Files Modified
+- `package.json` - Updated React type definitions to match runtime version
+
+#### Verification
+- ✅ Lint check passed (82 files, 0 errors)
+- ✅ TypeScript compilation successful
+- ✅ All components with hooks now work correctly
+
+---
+
+## [1.2.2] - 2025-12-01
+
+### Fixed - Admin Panel Functionality
+
+#### Integration Configuration
+- **Fixed**: Integration configuration now saves and persists correctly
+  - Updated `updateIntegration` in securityService to actually update the mock data array
+  - Added data reload after save to ensure UI stays in sync
+  - Configuration changes now persist across page refreshes
+
+#### User Management
+- **Fixed**: User editing now fully functional
+  - Added `updateUser` function to securityService
+  - Created UserEditDialog component for editing user information
+  - Edit button now opens functional dialog
+  - Users can update username, email, and role
+  - Changes persist and update UI immediately
+
+#### New Component
+- **UserEditDialog**: New dialog component for user editing
+  - Edit username field
+  - Edit email field
+  - Change user role (Admin, Analyst, Manager)
+  - Role description helper text
+  - Form validation
+  - Cancel and Save buttons
+
+#### Files Modified
+- `src/services/securityService.ts` - Fixed updateIntegration, added updateUser
+- `src/pages/AdminPanel.tsx` - Added user editing functionality
+- `src/components/security/UserEditDialog.tsx` - New component
+
+#### User Experience
+- Success/error toasts provide clear feedback
+- Smooth dialog animations
+- Proper state management
+- Intuitive user interface
+
+---
+
 ## [1.2.1] - 2025-12-01
 
 ### Added - Comprehensive Installation Documentation

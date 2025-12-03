@@ -71,14 +71,6 @@ Docker >= 20.10
 Docker Compose >= 2.0
 ```
 
-Para agilizar a preparação do ambiente Docker em distribuições Debian/Ubuntu, execute o script de requisitos na raiz do projeto:
-
-```bash
-./requirements.sh
-```
-
-Ele instala Docker Engine, Docker Compose plugin e adiciona o usuário atual ao grupo `docker` (quando necessário), evitando a necessidade de usar `sudo` ao executar `docker compose up -d`.
-
 ---
 
 ## 📋 Step-by-Step Installation Guide
