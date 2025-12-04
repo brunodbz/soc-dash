@@ -9,8 +9,9 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install pnpm
-RUN npm install -g pnpm
+# Install pnpm using a more reliable mirror for npmjs
+RUN npm config set registry https://registry.npmmirror.com/ \
+  && npm install -g pnpm
 
 # Improve resilience against registry timeouts
 # Use the npmmirror registry by default because it is more stable from CI
