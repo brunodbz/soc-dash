@@ -13,7 +13,9 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
 
 # Improve resilience against registry timeouts
-ENV PNPM_REGISTRY=https://registry.npmjs.org/ \
+# Use the npmmirror registry by default because it is more stable from CI
+# environments that occasionally time out against npmjs.org.
+ENV PNPM_REGISTRY=https://registry.npmmirror.com/ \
   PNPM_FETCH_TIMEOUT=600000 \
   PNPM_FETCH_RETRIES=10 \
   PNPM_FETCH_RETRY_MINTIMEOUT=20000 \
